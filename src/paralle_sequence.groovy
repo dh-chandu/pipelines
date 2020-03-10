@@ -8,7 +8,7 @@ pipeline {
             steps {
                 script {
                     for (int i = 1; i < 5; i++) {
-                        stepsToRun["Step${i}"] = prepareStage "Step${i}"
+                        stepsToRun["Step${i}"] = prepareStage("Step${i}")
                     }
                     parallel stepsToRun
                 }
