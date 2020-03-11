@@ -1,4 +1,5 @@
-@Library('shared_libs_cdh') import jnpr.releng.dynamicFunc;
+@Library('shared_libs_cdh')
+import jnpr.releng.*;
 def stepsToRun = [:]
 
 pipeline {
@@ -11,7 +12,7 @@ pipeline {
 //                    for (int i = 1; i < 300; i++) {
 //                        stepsToRun["Step${i}"] = prepareStage("Step${i}")
 //                    }
-                    def s = new dynamicFunc()
+                    def s = new DynamicFunc()
                     def components = ['hello', 'goodbye']
                     for (component in components){
                         stepsToRun[component] = s."${component}"(component)
