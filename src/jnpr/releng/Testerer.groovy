@@ -8,7 +8,7 @@ public class Testerer implements Serializable {
 //        this.name = pName
 //    }
 
-    def sayHi(String name) {
-        println "Hello, ===== "+name
+    def sayHi(name) {
+        println "Hello, ===== "+this.name}."
     }
 }
