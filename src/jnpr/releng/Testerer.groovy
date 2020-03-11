@@ -12,4 +12,16 @@ public class Testerer implements Serializable {
         //println "Hello, ===== ${this.name}."
         println "Hello, ===== "
     }
+    def ui() {
+        pipeline {
+            agent any
+            stages {
+                stage('Odd Stage') {
+                    steps {
+                        echo "The build number is odd"
+                    }
+                }
+            }
+        }
+    }
 }
