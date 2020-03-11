@@ -1,5 +1,5 @@
 @Library('shared_libs_cdh')
-import jnpr.releng.*;
+import jnpr.releng.Testerer;
 
 pipeline {
     agent none
