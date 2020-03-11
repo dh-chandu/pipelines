@@ -13,12 +13,19 @@ pipeline {
 //                    }
                     def components = ['bcm', 'ui']
                     for (component in components){
-                        stepsToRun[component] = assert "${component}"(component)
+                        switch (component){
+                            case 'bcm':
+                                stepsToRun[component] = bcm(component)
+                            case 'ui':
+                                stepsToRun[component] = ui(component)
+                            default:
+                                println 'waste'
                         }
                     }
-                    parallel stepsToRun
                 }
+                parallel stepsToRun
             }
         }
     }
+}
 
