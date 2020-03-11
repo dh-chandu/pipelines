@@ -12,7 +12,7 @@ pipeline {
 //                    for (int i = 1; i < 300; i++) {
 //                        stepsToRun["Step${i}"] = prepareStage("Step${i}")
 //                    }
-                    def s = new dynamicFunc()
+                    def s = new dynamicFuncCall()
                     def components = ['hello', 'goodbye']
                     for (component in components){
                         stepsToRun[component] = s."${component}"(component)
