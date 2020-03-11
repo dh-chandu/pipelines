@@ -1,5 +1,4 @@
-@Library('shared_libs_cdh')
-import jnpr.releng.*;
+@Library('shared_libs_cdh@') import jnpr.releng.*;
 def stepsToRun = [:]
 
 pipeline {
