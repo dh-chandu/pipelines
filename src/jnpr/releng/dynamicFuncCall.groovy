@@ -1,6 +1,6 @@
 package jnpr.releng
 
-class dynamicFuncCall{
+class dynamicFunc{
     def ui(value) {
         return {
             stage (name) {
