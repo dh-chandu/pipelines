@@ -1,7 +1,7 @@
 
 package jnpr.releng
 
-public class DynamicFunc implements Serializable  {
+public class DynamicFunction implements Serializable  {
     DynamicFunc(String pName) {
         this.name = pName
     }
