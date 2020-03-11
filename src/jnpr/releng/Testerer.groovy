@@ -4,7 +4,7 @@ package jnpr.releng
 public class Testerer implements Serializable {
     public String name = "test"
 
-    Tester(String pName) {
+    Testerer(String pName) {
         this.name = pName
     }
 
