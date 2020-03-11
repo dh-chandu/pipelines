@@ -13,7 +13,7 @@ pipeline {
 //                    }
                     def components = ['bcm', 'ui']
                     for (component in components){
-                        stepsToRun[component] = "${component}"(component)
+                        stepsToRun[component] = assert "${component}"(component)
                         }
                     }
                     parallel stepsToRun
