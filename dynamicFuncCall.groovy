@@ -22,8 +22,3 @@ pipeline {
         }
     }
 }
-
-
-
-
-evenOrOdd(currentBuild.getNumber())
