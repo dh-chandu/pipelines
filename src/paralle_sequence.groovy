@@ -22,8 +22,8 @@ pipeline {
                                 println 'waste'
                         }
                     }
+                    parallel stepsToRun
                 }
-                parallel stepsToRun
             }
         }
     }
