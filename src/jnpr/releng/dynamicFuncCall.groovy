@@ -1,6 +1,6 @@
 package jnpr.releng
 
-class dynamicFunc implements Serializable {
+class dynamicFunc{
     def ui(value) {
         return {
             stage (name) {

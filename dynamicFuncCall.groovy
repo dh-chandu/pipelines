@@ -1,4 +1,4 @@
-@Library('shared_libs_cdh') import jnpr.releng.dynamicFunc
+@Library('shared_libs_cdh@') import jnpr.releng.dynamicFunc
 def stepsToRun = [:]
 
 pipeline {
