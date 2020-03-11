@@ -2,6 +2,9 @@
 package jnpr.releng
 
 class DynamicFunc  {
+    DynamicFunc(String pName) {
+        this.name = pName
+    }
     def ui(value) {
         return {
             stage (name) {
@@ -34,7 +37,7 @@ class DynamicFunc  {
             }
         }
     }
-    def sayHi(name){
-        return  'Heee '+name
+    def sayHi(){
+        return  'Heee '+this.name
     }
 }
