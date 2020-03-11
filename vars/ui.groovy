@@ -11,7 +11,7 @@ def call(String name = 'human') {
                 sleep 1
                 echo "done 2"
             }
-            stage("build") {
+            stage("builcdddd") {
                 echo "start 2"
                 sleep 1
                 echo "done 2"
