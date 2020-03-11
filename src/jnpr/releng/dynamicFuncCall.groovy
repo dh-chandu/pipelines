@@ -1,5 +1,3 @@
-package jnpr.releng
-
 class dynamicFunc{
     def ui(value) {
         return {
