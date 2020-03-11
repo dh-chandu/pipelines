@@ -34,4 +34,7 @@ class DynamicFunc  {
             }
         }
     }
+    def sayHi(name){
+        println 'Heee '+name
+    }
 }

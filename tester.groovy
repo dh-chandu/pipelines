@@ -8,7 +8,7 @@ pipeline {
             steps{
                 sayHello 'test'
                 script{
-                    def t = new Tester('Alice')
+                    def t = new DynamicFunc()
                     t.sayHi()
                 }
             }
