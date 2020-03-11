@@ -1,7 +1,7 @@
 @Library('shared_libs_cdh')
 import jnpr.releng.*;
 
-stages{
+pipeline{
     stage('Demo') {
         steps{
             echo 'Hello world'
