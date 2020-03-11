@@ -5,10 +5,10 @@ public class DynamicFunc implements Serializable  {
     DynamicFunc(String pName) {
         this.name = pName
     }
-    def ui(value) {
+    def ui() {
         return {
-            stage (name) {
-                stage(name+"checkout") {
+            stage (this.name) {
+                stage(this.name+"checkout") {
                     echo "start 1"
                     sleep 1
                     echo "done 1"
