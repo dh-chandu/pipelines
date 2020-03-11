@@ -1,7 +1,7 @@
 
 package jnpr.releng
 
-public class Tester implements Serializable {
+public class DynamicFunction implements Serializable {
     public String name = "test"
 
     Tester(String pName) {
