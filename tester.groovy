@@ -7,7 +7,7 @@ pipeline {
         stage('Demo') {
             steps{
                 script{
-                    def t = new DynamicFunc()
+                    def t = new Tester('cddh')
                     println t.sayHi()
                 }
             }
