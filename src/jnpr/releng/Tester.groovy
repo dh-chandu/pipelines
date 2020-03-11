@@ -9,6 +9,6 @@ public class Tester implements Serializable {
     }
 
     def sayHi() {
-        sh 'echo "Hello, ===== ${this.name}."'
+        println "Hello, ===== ${this.name}."
     }
 }
