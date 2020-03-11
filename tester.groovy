@@ -1,5 +1,5 @@
-@Library('pipeline-library-demo')
-import de.schlumpf.*;
+@Library('shared_libs_cdh')
+import jnpr.releng.*;
 
 stages{
     stage('Demo') {

@@ -1,5 +1,5 @@
 
-package de.schlumpf
+package jnpr.releng
 
 public class Tester implements Serializable {
   public String name = "test"
