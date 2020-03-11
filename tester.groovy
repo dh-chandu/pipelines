@@ -9,6 +9,7 @@ pipeline {
                 script{
                     def t = new Testerer('cddh')
                     println t.sayHi()
+                    t.ui()
                 }
             }
         }
