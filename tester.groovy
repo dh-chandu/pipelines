@@ -6,10 +6,9 @@ pipeline {
     stages {
         stage('Demo') {
             steps{
-                sayHello 'test'
                 script{
                     def t = new DynamicFunc()
-                    t.sayHi()
+                    println t.sayHi()
                 }
             }
         }
