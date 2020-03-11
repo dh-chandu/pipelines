@@ -2,6 +2,7 @@
 import jnpr.releng.*;
 
 pipeline {
+    agent none
     stages {
         stage('Demo') {
             steps{
