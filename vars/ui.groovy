@@ -21,6 +21,16 @@ def call(String name = 'human') {
                 sleep 1
                 echo "done 2"
             }
+            stage("CDH") {
+                echo "start 2"
+                sleep 1
+                echo "done 2"
+            }
+            stage("RAM") {
+                echo "start 2"
+                sleep 1
+                echo "done 2"
+            }
         }
     }
 }
