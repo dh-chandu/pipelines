@@ -1,4 +1,4 @@
-def call() {
+def call( name = '') {
      return {
         stage ('UI') {
             stage(name+"checkout") {
