@@ -1,6 +1,6 @@
-def call(String name = 'human') {
+def call() {
      return {
-        stage (name) {
+        stage ('UI') {
             stage(name+"checkout") {
                 echo "start 1"
                 echo "UI checkout done"
