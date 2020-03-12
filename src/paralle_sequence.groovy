@@ -5,7 +5,7 @@ pipeline {
     agent none
 
     stages {
-        stage("Prepare Stages") {
+        stage ("Prepare Stages"){
             steps {
                 script {
 //                    for (int i = 1; i < 300; i++) {
