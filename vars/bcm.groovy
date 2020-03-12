@@ -6,7 +6,8 @@ def call(String name = '') {
                     sh "ls -ltr ${env.WORKSPACE}/"
                     def cmd = 'ls -ltr '+env.WORKSPACE
                     def files = sh(returnStdout: true, script: cmd).trim()
-                    println '----files---'+files
+                    def script_bash = libraryResource 'jnpr/releng/cdh.sh'
+                    println '----script_bash---'+script_bash
                     echo "$name checkout "
                     echo "$name checkout done"
                 }
