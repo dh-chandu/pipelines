@@ -4,7 +4,7 @@ def call(String name = '') {
             node {
                 stage(name+" checkout") {
                     sh "echo ${env.WORKSPACE}/../${env.JOB_NAME}"
-                    def files= sh(returnStdout: true, script: 'ls -ltr ${WORKSPACE}/')
+                    def files = sh(returnStdout: true, script: 'ls -ltr ${env.WORKSPACE}/').trim()
                     println '----files---'+files
                     echo "$name checkout "
                     echo "$name checkout done"
