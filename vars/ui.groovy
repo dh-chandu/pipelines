@@ -1,6 +1,6 @@
 def call( name = '') {
      return {
-        stage ('UI') {
+        stage (name) {
             stage(name+"checkout") {
                 echo "start 1"
                 echo "UI checkout done"
