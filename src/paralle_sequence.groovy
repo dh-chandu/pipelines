@@ -16,8 +16,8 @@ pipeline {
                         switch (component){
                             case 'bcm':
                                 stepsToRun[component] = bcm(component)
-                            case 'ui':
-                                stepsToRun[component] = ui(component)
+//                            case 'ui':
+//                                stepsToRun[component] = ui(component)
                             default:
                                 println 'waste'
                         }
