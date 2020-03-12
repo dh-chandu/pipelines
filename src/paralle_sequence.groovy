@@ -11,9 +11,10 @@ pipeline {
 //                    for (int i = 1; i < 300; i++) {
 //                        stepsToRun["Step${i}"] = prepareStage("Step${i}")
 //                    }
-                    def components = ['bcm', 'ui']
-                    for (component in components){
-                        def tmp = component
+                    String[] components = ['bcm', 'ui']
+//                    for (component in components){
+                    for (int i = 0; i < components.length; i++) {
+                        def tmp = components[i]
                         def tmp_component = tmp
                         switch (tmp_component){
                             case 'bcm':
