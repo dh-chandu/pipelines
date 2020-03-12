@@ -19,7 +19,7 @@ pipeline {
                                 println 'waste'
                                 break;
                         }
-                        stepsToRun[component] = generic_component(component)
+                        //stepsToRun[component] = generic_component(component)
                     }
                     parallel stepsToRun
                 }
