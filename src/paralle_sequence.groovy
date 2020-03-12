@@ -12,26 +12,37 @@ pipeline {
 //                        stepsToRun["Step${i}"] = prepareStage("Step${i}")
 //                    }
                     String[] components = ['bcm', 'ui']
-//                    for (component in components) {
+//                    for (component in components){
                     for (int i = 0; i < components.length; i++) {
-//                        println '-component---' + i + '-----' + components[i]
+                        println '-component---'+i+'-----'+components[i]
                         def tmp = components[i]
-                        println '====tmp===' + tmp
-                        if (tmp == 'bcm') {
-                            stepsToRun[tmp] = bcm(tmp)
+                        println '====tmp==='+tmp
+                        def tmp_component = tmp
+                        println '====tmp_component ==='+tmp_component
+                        if (tmp == 'bcm'){
+                            stepsToRun[tmp_component] = bcm(tmp_component)
 
                         }
-                        if (tmp == 'ui') {
-                            stepsToRun[tmp] = ui(tmp)
+                        if (tmp == 'ui'){
+                            stepsToRun[tmp_component] = ui(tmp_component)
                         }
-
+//                        switch (tmp_component){
+//                            case 'bcm':
+//                                println 'inside swich bcm'+tmp_component
+//                                stepsToRun[tmp_component] = bcm(tmp_component)
+//                            case 'ui':
+//                                println 'inside swich ui'+tmp_component
+//                                stepsToRun[tmp_component] = ui(tmp_component)
+//                            default:
+//                                println 'waste'
+//                        }
+                    }
 //                    stepsToRun['bcm'] = bcm('bcm')
 //                    stepsToRun['ui'] = ui('ui')
-                        parallel stepsToRun
-                    }
+                    parallel stepsToRun
                 }
             }
         }
     }
-
 }
+
