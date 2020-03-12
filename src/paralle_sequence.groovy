@@ -3,7 +3,6 @@ def stepsToRun = [:]
 
 pipeline {
     agent none
-
     stages {
         stage ("Prepare Stages"){
             steps {
