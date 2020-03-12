@@ -17,14 +17,12 @@ pipeline {
 //                        println '-component---' + i + '-----' + components[i]
                         def tmp = components[i]
                         println '====tmp===' + tmp
-                        def tmp_component = tmp
-                        println '====tmp_component ===' + tmp_component
                         if (tmp == 'bcm') {
-                            stepsToRun[tmp_component] = bcm(tmp_component)
+                            stepsToRun[tmp] = bcm(tmp)
 
                         }
                         if (tmp == 'ui') {
-                            stepsToRun[tmp_component] = ui(tmp_component)
+                            stepsToRun[tmp] = ui(tmp)
                         }
 
 //                    stepsToRun['bcm'] = bcm('bcm')
