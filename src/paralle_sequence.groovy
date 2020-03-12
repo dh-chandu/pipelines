@@ -10,16 +10,13 @@ pipeline {
                 script {
                     String[] components = ['bcm', 'ui']
                     for (component in components){
-                        def tmp = component
-                        println '====tmp==='+tmp
-                        def tmp_component = tmp
-                        println '====tmp_component ==='+tmp_component
-                        if (tmp == 'bcm'){
-                            stepsToRun[tmp_component] = bcm(tmp_component)
+//                        def tmp = component
+                        if (component == 'bcm'){
+                            stepsToRun[component] = bcm(component)
 
                         }
-                        if (tmp == 'ui'){
-                            stepsToRun[tmp_component] = ui(tmp_component)
+                        if (component == 'ui'){
+                            stepsToRun[component] = ui(component)
                         }
 
                     }
