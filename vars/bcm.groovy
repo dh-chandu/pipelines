@@ -4,7 +4,7 @@ def call(String name = '') {
             node {
                 stage(name+" checkout") {
                     sh "echo ${env.WORKSPACE}/../${env.JOB_NAME}"
-                    sh " ls -ltr ${env.WORKSPACE}/../${env.JOB_NAME}"
+                    sh " ls -ltr ${env.WORKSPACE}/"
                     echo "$name checkout "
                     echo "$name checkout done"
                 }
