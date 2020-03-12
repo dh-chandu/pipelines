@@ -28,7 +28,6 @@ pipeline {
 //                        println '========================='+i+'================'
 //                        println stepsToRun[i]
 //                    }
-                    println stepsToRun[i]
                     parallel stepsToRun
                 }
             }
