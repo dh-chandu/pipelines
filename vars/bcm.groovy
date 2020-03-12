@@ -5,11 +5,11 @@ def call(String name = '') {
                 echo "$name checkout "
                 echo "$name checkout done"
             }
-            stage($name+" Build") {
+            stage(name+" Build") {
                 echo "$name build "
                 echo "$name build done "
             }
-            stage($name+" test") {
+            stage(name+" test") {
                 echo "$name Test "
                 echo "$name Test done "
             }
