@@ -12,10 +12,10 @@ pipeline {
 //                        stepsToRun["Step${i}"] = prepareStage("Step${i}")
 //                    }
                     String[] components = ['bcm', 'ui']
-                    for (component in components) {
-//                    for (int i = 0; i < components.length; i++) {
+//                    for (component in components) {
+                    for (int i = 0; i < components.length; i++) {
 //                        println '-component---' + i + '-----' + components[i]
-                        def tmp = component
+                        def tmp = components[i]
                         println '====tmp===' + tmp
                         def tmp_component = tmp
                         println '====tmp_component ===' + tmp_component
