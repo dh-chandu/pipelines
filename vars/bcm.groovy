@@ -1,13 +1,17 @@
 def call(String name = '') {
      return {
         stage (name) {
-            stage("BCM checkout") {
-                echo "this is from BCM checkout"
-                echo "BCM done"
+            stage(name+" checkout") {
+                echo "$name checkout "
+                echo "$name checkout done"
             }
-            stage("BCM Build") {
-                echo "BCM build "
-                echo "build done "
+            stage($name+" Build") {
+                echo "$name build "
+                echo "$name build done "
+            }
+            stage($name+" test") {
+                echo "$name Test "
+                echo "$name Test done "
             }
         }
     }
