@@ -3,32 +3,26 @@ def call(String name = 'human') {
         stage (name) {
             stage(name+"checkout") {
                 echo "start 1"
-                sleep 1
-                echo "done 1"
+                echo "UI checkout done"
             }
             stage("build") {
-                echo "start 2"
-                sleep 1
-                echo "done 2"
+                echo "Ui build  "
+                echo "UI done "
             }
-            stage("builcdddd") {
-                echo "start 2"
-                sleep 1
-                echo "done 2"
+            stage("test") {
+                echo "UI test start "
+                echo "UI testdone "
             }
-            stage("build") {
+            stage("build UI extra ") {
                 echo "start 2"
-                sleep 1
-                echo "done 2"
+                echo "done "
             }
             stage("CDH") {
-                echo "start 2"
-                sleep 1
-                echo "done 2"
+                echo "UI cdh start 2"
+                echo "done cdh"
             }
             stage("RAM") {
                 echo "start 2"
-                sleep 1
                 echo "done 2"
             }
         }
