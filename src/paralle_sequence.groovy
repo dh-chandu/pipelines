@@ -10,15 +10,17 @@ pipeline {
                 script {
                     String[] components = ['bcm', 'ui']
                     for (component in components){
-//                        def tmp = component
-                        if (component == 'bcm'){
-                            stepsToRun[component] = bcm(component)
-
+                        switch (component){
+                            case 'bcm':
+                                stepsToRun[component] = bcm(component)
+                                break;
+                            case 'ui':
+                                stepsToRun[component] = ui(component)
+                                break;
+                            default:
+                                println 'waste'
+                                break;
                         }
-                        if (component == 'ui'){
-                            stepsToRun[component] = ui(component)
-                        }
-
                     }
                     parallel stepsToRun
                 }
