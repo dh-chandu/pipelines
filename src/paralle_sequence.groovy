@@ -11,10 +11,10 @@ pipeline {
                     for (component in components){
                         switch (component){
                             case 'bcm':
-                                stepsToRun[component] = bcm(component)
+                                stepsToRun[component] = bcm()
                                 break;
                             case 'ui':
-                                stepsToRun[component] = ui(component)
+                                stepsToRun[component] = ui()
                                 break;
                             default:
                                 println 'waste'
