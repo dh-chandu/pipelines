@@ -12,10 +12,9 @@ pipeline {
 //                        stepsToRun["Step${i}"] = prepareStage("Step${i}")
 //                    }
                     def components = ['bcm', 'ui']
-//                    for (component in components){
-                    components.each{
-                        def tmp = it
-                        def tmp_component = tmp
+                    for (component in components){
+                        def tmp = component
+                        def tmp_component = tmp.trim()
                         switch (tmp_component){
                             case 'bcm':
                                 stepsToRun[tmp_component] = bcm(tmp_component)
