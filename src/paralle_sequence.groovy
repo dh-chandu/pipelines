@@ -13,7 +13,8 @@ pipeline {
 //                    }
                     def components = ['bcm', 'ui']
                     for (component in components){
-                        def tmp_component = component
+                        def tmp = component
+                        def tmp_component = tmp
                         switch (tmp_component){
                             case 'bcm':
                                 stepsToRun[tmp_component] = bcm(tmp_component)
