@@ -7,6 +7,7 @@ pipeline {
         stage ("Prepare Stages"){
             steps {
                 script {
+                    @NonCPS
                     String[] components = ['bcm', 'ui']
                     def dynamicArgs = [1,2]
                     def groovy = new GroovyObject(){}
