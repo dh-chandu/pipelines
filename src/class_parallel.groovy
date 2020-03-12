@@ -9,7 +9,7 @@ pipeline {
                 script {
                     String[] components = ['bcm', 'ui']
                     def dynamicArgs = [1,2]
-                    def groovy = new GroovyObject()
+                    def groovy = new GroovyObject(){}
                     GroovyObject.methods.each{
                         stepsToRun[component] = groovy."$it.name"("$it.name", *components)
                     }
