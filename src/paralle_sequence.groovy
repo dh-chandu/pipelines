@@ -7,10 +7,12 @@ pipeline {
             steps {
                 script {
                     String[] components = ['bcm', 'ui']
+                    def script_bash = libraryResource 'jnpr/releng/cdh.sh'
+                    println script_bash
                     for (component in components){
                         switch (component){
                             case 'bcm':
-                                stepsToRun[component] = bcm(component)
+                                stepsToRun[component] = bcm(component, src_path)
                                 break;
                             case 'ui':
                                 stepsToRun[component] = ui(component)
