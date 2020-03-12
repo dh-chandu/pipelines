@@ -19,16 +19,23 @@ pipeline {
                         println '====tmp==='+tmp
                         def tmp_component = tmp
                         println '====tmp_component ==='+tmp_component
-                        switch (tmp_component){
-                            case 'bcm':
-                                println 'inside swich bcm'+tmp_component
-                                stepsToRun[tmp_component] = bcm(tmp_component)
-                            case 'ui':
-                                println 'inside swich ui'+tmp_component
-                                stepsToRun[tmp_component] = ui(tmp_component)
-                            default:
-                                println 'waste'
+                        if (tmp == 'bcm'){
+                            stepsToRun[tmp_component] = bcm(tmp_component)
+
                         }
+                        if (tmp == 'ui'){
+                            stepsToRun[tmp_component] = ui(tmp_component)
+                        }
+//                        switch (tmp_component){
+//                            case 'bcm':
+//                                println 'inside swich bcm'+tmp_component
+//                                stepsToRun[tmp_component] = bcm(tmp_component)
+//                            case 'ui':
+//                                println 'inside swich ui'+tmp_component
+//                                stepsToRun[tmp_component] = ui(tmp_component)
+//                            default:
+//                                println 'waste'
+//                        }
                     }
 //                    stepsToRun['bcm'] = bcm('bcm')
 //                    stepsToRun['ui'] = ui('ui')
