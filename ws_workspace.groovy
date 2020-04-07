@@ -1,6 +1,6 @@
 pipeline {
   agent {
-    label "something"
+    label any
   }
   options {
     skipDefaultCheckout()
