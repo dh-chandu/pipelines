@@ -1,0 +1,311 @@
+properties([disableConcurrentBuilds(), parameters([string(defaultValue: 'evo', description: 'Project name in evo (as in project-config)', name: 'PROJECT', trim: false), string(defaultValue: 'master', description: 'Name of the branch in evo (component-manifest repo)', name: 'EVO_BRANCH', trim: false), string(defaultValue: 'DEV_COMMON_BRANCH', description: '', name: 'JUNOS_BRANCH', trim: false), string(defaultValue: '/evobuilds2/daily/rpd-infra/EVO/$EVO_BRANCH', description: 'Base dir for EVO sandbox', name: 'EVO_BASE_DIR', trim: false), string(defaultValue: '/volume/rpd-infra-archive/$JUNOS_BRANCH', description: 'Branch name as in junos repo', name: 'JUNOS_BASE_DIR', trim: false)]), [$class: 'ThrottleJobProperty', categories: [], limitOneJobWithMatchingParams: false, maxConcurrentPerNode: 0, maxConcurrentTotal: 0, paramsToUseForLimit: '', throttleEnabled: false, throttleOption: 'project']])
+
+def getSbname(machine, SB_LOCATION) {
+    node(machine){
+        def SPIN = 1
+        time = new Date().format("yyyyMMdd")
+        SB_NAME = SB_LOCATION+"pub-"+time+"."+SPIN
+        while (fileExists(SB_NAME)) {
+            SPIN+=1
+            SB_NAME = SB_LOCATION+"pub-"+time+"."+SPIN
+            folder = new File( SB_NAME )
+        }
+        SB_NAME = "pub-"+time+"."+SPIN
+        return SB_NAME
+    }
+}
+
+env.MAIL_LIST = 'psg-evo-build, cdh@juniper.net,'
+
+def sendMail ( triggered_by='',mail_list='' ) {
+    if( mail_list != null ){
+        script{
+            env.MAIL_LIST += mail_list
+        }
+    }
+    emailext body: '''Hi,
+
+RPD Pipeline for : $EVO_BRANCH '''+triggered_by+''' in $STAGE
+for more details : $RUN_DISPLAY_URL
+
+$BUILD_URL --- $BUILD_NUMBER
+
+
+Regards,
+psg-evo-build
+''', subject: "RPD job for $EVO_BRANCH # -"+triggered_by, to: env.MAIL_LIST, replyTo: env.MAIL_LIST
+
+}
+
+
+def evo_sb = getSbname( 'svl-evobuild-02', EVO_BASE_DIR)
+def junos_sb = getSbname( 'svl-evo-rpdinfra', JUNOS_BASE_DIR)
+env.EVO_SB = EVO_BASE_DIR +'/'+ evo_sb
+env.JUNOS_SB = JUNOS_BASE_DIR +'/'+junos_sb
+
+env.EVO_HOST='svl-evobuild-02'
+env.JUNOS_HOST='svl-evo-rpdinfra'
+env.SCRIPT_ROOT='/volume/evo/files/share/buildtools/'
+env.CONF_FILE='/volume/evo/files/share/ci/'+EVO_BRANCH+'/groovy_rpd_pub_pipeline.config'
+env.SANDBOX_TOOLS_LIB = env.SCRIPT_ROOT+'sandbox-tools/lib'
+env.JUNOS_RPD_BUILD_SCRIPT = env.SCRIPT_ROOT+'release-tools/build-tools/junos-rpd-infra-build.py'
+env.CLS_SB_SCRIPT = env.SCRIPT_ROOT+'release-tools/jenkins-scripts/cleanup_sbs.sh -r 10 -c 204800'
+env.EVO_RPD_BUILD_SCRIPT = env.SCRIPT_ROOT+'release-tools/build-tools/evo-rpd-infra.py '
+env.ARC_SCRIPT=env.SCRIPT_ROOT+'release-tools/jenkins-scripts/archive_build.sh '
+env.CONFIG_INI = '/volume/evo/files/config/rpd-infra_pub.ini'
+
+pipeline{
+    agent none
+    options { skipDefaultCheckout() }
+    stages{
+        stage('PRE_BUILD'){
+            parallel{
+                stage('cleanup'){
+                    agent {
+                        label EVO_HOST
+                    }
+                    steps{
+                        echo 'cleanup'
+                        script{
+                            def cls_res = sh(script:'''
+                                            hostname -a
+                                            ${CLS_SB_SCRIPT} -d $EVO_BASE_DIR
+                                            ${CLS_SB_SCRIPT} -d $JUNOS_BASE_DIR ''',returnStatus: true)
+                            if (cls_res != 0){
+                                env.STAGE = 'CLEANUP'
+                                sh 'exit 1'
+                            }
+
+                        }
+                    }
+                }
+                stage('pre-check'){
+                    agent {
+                        label EVO_HOST
+                    }
+                    steps{
+                        echo 'pre-check'
+                        script{
+                            def pre_res=sh(script:'''
+                                hostname -a
+                                if [ ! -d $EVO_BASE_DIR ]
+                                then
+                                    echo EVO_BASE_DIR $EVO_BASE_DIR not found!!
+                                    exit 1
+                                elif [ ! -d $JUNOS_BASE_DIR ]
+                                then
+                                    echo JUNOS_BASE_DIR $JUNOS_BASE_DIR not found!!!
+                                    exit 1
+                                elif ! $(grep -q "[$PROJECT]"  $CONFIG_INI )
+                                then
+                                    echo preject entry $PROJECT  not found in  $JUNOS_CONF_INI !!!
+                                    exit 1
+                                fi ''', returnStatus: true)
+                            if(pre_res != 0){
+                                env.STAGE = 'pre-check'
+                                sh 'echo Failed in ${STAGE}'
+                                sh 'exit 1'
+                            }
+                        }
+                    }
+                }
+            }
+        }
+        stage('RPD_JUNOS_BUILD'){
+            agent {
+                label JUNOS_HOST
+            }
+
+            steps{
+
+                echo 'RPD_JUNOS_BUILD'
+                script{
+                    def jnos_res = sh(script:'''
+                        hostname -a
+                        export PATH=/volume/buildtools/bin:${PATH}
+                        export SANDBOX_TOOLS_LIB=${SANDBOX_TOOLS_LIB}
+                        ${JUNOS_RPD_BUILD_SCRIPT} -p ${PROJECT} -B -e ${JUNOS_SB}
+                        cat ${CONF_FILE}''' ,returnStatus: true)
+                    if (jnos_res != 0 ){
+                        env.STAGE = 'RPD_JUNOS_BUILD'
+                        println  "Failed in ${STAGE} ---"+junos_res
+                        sh 'exit 1'
+                    }
+                    def junos_arc = sh(script:'''
+                        hostname -a
+                        export PATH=/volume/buildtools/bin:${PATH}
+                        ${JUNOS_RPD_BUILD_SCRIPT} -p ${PROJECT} -u ${JUNOS_SB} -A
+                        sed -i "/^env.JUNOS_SB=/c\\env.JUNOS_SB=\\"${JUNOS_SB}\\"" ${CONF_FILE}''',returnStatus: true)
+                    if (junos_arc != 0 ){
+                        env.STAGE = 'RPD_JUNOS_ARCHIEVE'
+                        sh 'echo Failed in ${STAGE}'
+                        sh 'exit 1'
+                    }
+
+                }
+
+            }
+
+        }
+        stage('RPD_EVO_BUILD'){
+            agent {
+                label EVO_HOST
+            }
+
+            steps{
+                load env.CONF_FILE
+                script {
+                    def evo_res = sh(script: '''
+                            hostname -a
+                            echo JUNOS_SB ${JUNOS_SB}
+                            echo ${SANDBOX_TOOLS_LIB}
+                            export PATH=/evo/files/share/buildtools/sandbox-tools/bin:$PATH
+                            ${EVO_RPD_BUILD_SCRIPT} -p $PROJECT -B -l ${PUBLISHED_JUNOS_RPD_SB} -c ${JUNOS_SB} -e ${EVO_SB}
+                            ''', returnStatus: true)
+                    if (evo_res != 0) {
+                        def update_conf = sh(script: '''
+                        hostname -a
+                        sed -i "/^env.RPD_CHANGE=/c\\env.RPD_CHANGE=\\"false\\"" ${CONF_FILE} ''', returnStatus: true)
+                        env.STAGE = 'RPD_JUNOS_ARCHIEVE'
+                        sh 'echo Failed in ${STAGE}'
+                        sh 'exit 1'
+                    } else {
+                        def update_conf = sh(script: '''
+                        hostname -a
+                        sed -i "/^env.RPD_CHANGE=/c\\env.RPD_CHANGE=\\"true\\"" ${CONF_FILE}
+                        sed -i "/^env.BUILT_JUNOS_RPD_SB=/c\\env.BUILT_JUNOS_RPD_SB=\\"${JUNOS_SB}\\"" ${CONF_FILE}
+                        sed -i "/^env.BUILT_RPD_SB=/c\\env.BUILT_RPD_SB=\\"${EVO_SB}\\"" ${CONF_FILE}
+                        ''', returnStatus: true)
+                        sh 'cat $CONF_FILE'
+                    }
+                }
+            }
+
+        }
+        stage('SANITY'){
+            parallel{
+                stage('RPD_TestSuit'){
+                    agent {
+                        label EVO_HOST
+                    }
+                    steps{
+                        load env.CONF_FILE
+                        echo 'RPD_TestSuit'
+                        build job: 'rpd_TestSuites_pipeline', parameters: [string(name: 'EVO_BRANCH', value: EVO_BRANCH)], propagate: false, wait: false
+                    }
+
+                }
+                stage('RPD_vBrackla_Smoke'){
+                    agent {
+                        label EVO_HOST
+                    }
+                    steps{
+                        load env.CONF_FILE
+                        echo 'RPD_vBrackla'
+                        build job: 'rpd_vBrackla_Smoke_pipeline', parameters: [string(name: 'EVO_BRANCH', value: EVO_BRANCH)]
+                    }
+
+                }
+            }
+
+        }
+        stage('UPDATE_CONFIG'){
+            agent{
+                label EVO_HOST
+            }
+            steps{
+                load env.CONF_FILE
+                script{
+                    def update_conf = sh (script:'''
+                        hostname -a
+                        sed -i "/^env.SMOKETESTED_RPD_SB=/c\\env.SMOKETESTED_RPD_SB=\\"${BUILT_RPD_SB}\\"" ${CONF_FILE}
+                        sed -i "/^env.SMOKETESTED_JUNOS_RPD_SB=/c\\env.SMOKETESTED_JUNOS_RPD_SB=\\"${BUILT_JUNOS_RPD_SB}\\"" ${CONF_FILE}
+                        ''',returnStatus: true)
+                }
+            }
+        }
+        stage('POST_BUILD'){
+            parallel{
+                stage('RPD_PUBLISH'){
+                    agent {
+                        label EVO_HOST
+                    }
+                    steps{
+                        load env.CONF_FILE
+                        echo 'RPD_PUBLISH'
+                        script{
+                            def pub_res = sh(script:'''
+                            hostname -a
+                            export PATH=/evo/files/share/buildtools/sandbox-tools/bin:$PATH
+                            if [ $RPD_CHANGE == 'true' ]; then
+                                ${EVO_RPD_BUILD_SCRIPT} -p $PROJECT -c ${SMOKETESTED_JUNOS_RPD_SB}  -P /volume/component/publishes/ -u ${SMOKETESTED_RPD_SB} --push --mirror-sites bng qnc
+                                if [ $? -eq 0 ];then
+                                    sed -i "/^env.PUBLISHED_RPD_SB=/c\\env.PUBLISHED_RPD_SB=\\"${BUILT_RPD_SB}\\"" ${CONF_FILE}
+                                    sed -i "/^env.PUBLISHED_JUNOS_RPD_SB=/c\\env.PUBLISHED_JUNOS_RPD_SB=\\"${BUILT_JUNOS_RPD_SB}\\"" ${CONF_FILE}
+                                 else
+                                    exit 1
+                                 fi
+                            else
+                                echo 'NO RPD Change. Skipped publish'
+                                exit 0
+                            fi
+                            ''', returnStatus: true)
+                            if (pub_res != 0 ){
+                                env.STAGE = 'RPD_PUBLISH'
+                                sh 'echo Failed in ${STAGE}'
+                                sh 'exit 1'
+                            }
+                        }
+                    }
+                }
+                stage('RPD_ARCHIVE'){
+                    agent {
+                        label EVO_HOST
+                    }
+                    steps{
+                        load env.CONF_FILE
+                        echo 'RPD_ARCHIVE'
+                        script{
+                            def arc_res = sh(script:'''
+                            hostname -a
+                            if [ $RPD_CHANGE == 'true' ]; then
+                                ARCHIVE_LOC=/volume/evo_003/daily/rpd-infra/EVO-TOT
+                                echo "Achiving ${BUILT_RPD_SB} to ${ARCHIVE_LOC}"
+                                if [ ! -d ${ARCHIVE_LOC} ];then
+                                  mkdir -p ${ARCHIVE_LOC}
+                                fi
+                                $ARC_SCRIPT ${BUILT_RPD_SB} ${ARCHIVE_LOC}
+                                if [ $? -ne 0 ]; then
+                                 echo 'RPD Build SB Archival failed\'
+                                 exit 1
+                                fi
+                            else
+                                echo 'NO RPD Change. Skipped Archival\'
+                                exit o
+                            fi
+                            ''',returnStatus: true)
+                            if (arc_res != 0 ){
+                                env.STAGE = 'RPD_ARCHIVE'
+                                sh 'echo Failed in ${STAGE}'
+                                sh 'exit 1'
+                            }
+                        }
+                    }
+                }
+            }
+        }
+    }
+    post{
+        success{
+            sendMail('Successful')
+        }
+        failure{
+            sendMail('Failed','psg-evo-build@juniper.net')
+        }
+        unstable{
+            sendMail('Unstable')
+        }
+    }
+}
+
+
